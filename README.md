@@ -10,3 +10,9 @@ Supported formats:
 - [x] SMPTE 12M  
 - [x] SMPTE 331M
 - [ ] SMPTE 309M
+
+=
+
+Supported by [Nomalab](http://www.nomalab.com/).
+
+<img src="http://www.nomalab.com/images/logo.svg" alt="Logo" height="30"/>
