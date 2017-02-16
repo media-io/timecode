@@ -10,6 +10,16 @@ fn get_number(data: u8, mask_tens: u8) -> u8 {
     (10 * tens) + unit
 }
 
+pub fn smpte_331m(data: &[u8]) -> Option<Timecode> {
+    if data.len() != 17 {
+        return None
+    }
+    match data[0] {
+        0x81 => smpte_12m(&data[1..]),
+        _ => None,
+    }
+}
+
 pub fn smpte_12m(data: &[u8]) -> Option<Timecode> {
 
     if data.len() < 4 {
