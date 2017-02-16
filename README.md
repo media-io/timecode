@@ -1,4 +1,4 @@
-RS-Timecode
+rs_timecode
 ===
 
 [![Build Status](https://travis-ci.org/MarcAntoine-Arnaud/rs_timecode.svg?branch=master)](https://travis-ci.org/MarcAntoine-Arnaud/rs_timecode)
