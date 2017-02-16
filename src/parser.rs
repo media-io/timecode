@@ -1,13 +1,5 @@
 
-#[derive(Debug)]
-pub struct Timecode {
-    pub hours: u8,
-    pub minutes: u8,
-    pub seconds: u8,
-    pub frame: u8,
-    pub drop_frame: bool,
-    pub color_frame: bool,
-}
+use timecode::Timecode;
 
 fn get_number(data: u8, mask_tens: u8) -> u8 {
     let mask_unit = 0x0F;
@@ -18,7 +10,7 @@ fn get_number(data: u8, mask_tens: u8) -> u8 {
     (10 * tens) + unit
 }
 
-pub fn parse_smpte_12m(data: &[u8]) -> Option<Timecode> {
+pub fn smpte_12m(data: &[u8]) -> Option<Timecode> {
 
     if data.len() < 4 {
         return None
@@ -31,8 +23,6 @@ pub fn parse_smpte_12m(data: &[u8]) -> Option<Timecode> {
     let seconds = get_number(data[1], mask_tens_3);
     let minutes = get_number(data[2], mask_tens_3);
     let hours = get_number(data[3], mask_tens_2);
-
-    // println!("{}:{}:{}:{}", hours, minutes, seconds, frame);
 
     let color_frame = (data[0] & 0b1000_0000) != 0;
     let drop_frame = (data[0] & 0b0100_0000) != 0;

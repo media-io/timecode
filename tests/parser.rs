@@ -4,14 +4,14 @@ extern crate timecode;
 #[test]
 fn test_bad_length() {
     let data = vec![0, 0, 0];
-    let tc = rs_timecode::parser::parse_smpte_12m(&data);
+    let tc = timecode::parser::smpte_12m(&data);
     assert!(tc.is_none());
 }
 
 #[test]
 fn test_zero() {
     let data = vec![0, 0, 0, 0, 0, 0, 0, 0];
-    let value = rs_timecode::parser::parse_smpte_12m(&data);
+    let value = timecode::parser::smpte_12m(&data);
 
     assert!(value.is_some());
     let tc = value.unwrap();
@@ -26,11 +26,10 @@ fn test_zero() {
 #[test]
 fn test_full_range() {
     let data = vec![0b0011_1111, 0b0111_1111, 0b0111_1111, 0b0011_1111, 0, 0, 0, 0];
-    let value = rs_timecode::parser::parse_smpte_12m(&data);
+    let value = timecode::parser::smpte_12m(&data);
 
     assert!(value.is_some());
     let tc = value.unwrap();
-    println!("{:?}", tc);
     assert!(tc.hours == 45);
     assert!(tc.minutes == 85);
     assert!(tc.seconds == 85);
@@ -42,11 +41,10 @@ fn test_full_range() {
 #[test]
 fn test_10_hours() {
     let data = vec![0, 0, 0, 0b0001_0000, 0, 0, 0, 0];
-    let value = rs_timecode::parser::parse_smpte_12m(&data);
+    let value = timecode::parser::smpte_12m(&data);
 
     assert!(value.is_some());
     let tc = value.unwrap();
-    println!("{:?}", tc);
     assert!(tc.hours == 10);
     assert!(tc.minutes == 0);
     assert!(tc.seconds == 0);
@@ -58,11 +56,10 @@ fn test_10_hours() {
 #[test]
 fn test_drop_frame_and_color_frame() {
     let data = vec![0b1100_0000, 0, 0, 0, 0, 0, 0, 0];
-    let value = rs_timecode::parser::parse_smpte_12m(&data);
+    let value = timecode::parser::smpte_12m(&data);
 
     assert!(value.is_some());
     let tc = value.unwrap();
-    println!("{:?}", tc);
     assert!(tc.hours == 0);
     assert!(tc.minutes == 0);
     assert!(tc.seconds == 0);

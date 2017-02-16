@@ -10,6 +10,8 @@ repository = "https://github.com/MarcAntoine-Arnaud/rs_timecode"
 documentation = "https://github.com/MarcAntoine-Arnaud/rs_timecode/blob/master/README.md"
 readme = "README.md"
 
+travis-ci = { repository = "...", branch = "master" }
+
 categories = ["encoding"]
 keywords = ["timecode", "SMPTE"]
 license = "MIT"
