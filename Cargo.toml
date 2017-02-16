@@ -1,0 +1,17 @@
+[package]
+name = "timecode"
+version = "0.1.0"
+authors = ["Marc-Antoine Arnaud <marc.antoine@nomalab.com>"]
+description = """
+library to parse binary timecode
+"""
+
+repository = "https://github.com/MarcAntoine-Arnaud/rs_timecode"
+documentation = "https://github.com/MarcAntoine-Arnaud/rs_timecode/blob/master/README.md"
+readme = "README.md"
+
+categories = ["encoding"]
+keywords = ["timecode", "SMPTE"]
+license = "MIT"
+
+[dependencies]
