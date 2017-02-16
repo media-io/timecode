@@ -10,7 +10,7 @@ repository = "https://github.com/MarcAntoine-Arnaud/rs_timecode"
 documentation = "https://github.com/MarcAntoine-Arnaud/rs_timecode/blob/master/README.md"
 readme = "README.md"
 
-travis-ci = { repository = "...", branch = "master" }
+travis-ci = { repository = "https://travis-ci.org/MarcAntoine-Arnaud/rs_timecode", branch = "master" }
 
 categories = ["encoding"]
 keywords = ["timecode", "SMPTE"]
