@@ -1,5 +1,5 @@
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Timecode {
     pub hours: u8,
     pub minutes: u8,

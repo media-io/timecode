@@ -17,3 +17,5 @@ keywords = ["timecode", "SMPTE"]
 license = "MIT"
 
 [dependencies]
+serde = "0.9.8"
+serde_derive = "0.9.8"
