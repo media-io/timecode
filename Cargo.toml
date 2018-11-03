@@ -19,5 +19,5 @@ license = "MIT"
 [dependencies]
 serde = "^1.0"
 serde_derive = "^1.0"
-nalgebra = "^0.12"
-alga = "0.5.1"
+nalgebra = "0.16.8"
+alga = "0.7.2"
