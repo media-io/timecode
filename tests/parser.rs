@@ -1,16 +1,17 @@
 extern crate timecode;
+use timecode::*;
 
 #[test]
 fn test_smpte_12m_bad_length() {
   let data = vec![0, 0, 0];
-  let tc = timecode::parser::smpte_12m(&data);
+  let tc = Timecode::<FrameRate2500>::parse_smpte_12m(&data);
   assert!(tc.is_none());
 }
 
 #[test]
 fn test_smpte_12m_zero() {
   let data = vec![0, 0, 0, 0, 0, 0, 0, 0];
-  let value = timecode::parser::smpte_12m(&data);
+  let value = Timecode::<FrameRate2500>::parse_smpte_12m(&data);
 
   assert!(value.is_some());
   let tc = value.unwrap();
@@ -34,7 +35,7 @@ fn test_smpte_12m_full_range() {
     0,
     0,
   ];
-  let value = timecode::parser::smpte_12m(&data);
+  let value = Timecode::<FrameRate2500>::parse_smpte_12m(&data);
 
   assert!(value.is_some());
   let tc = value.unwrap();
@@ -49,7 +50,7 @@ fn test_smpte_12m_full_range() {
 #[test]
 fn test_smpte_12m_10_hours() {
   let data = vec![0, 0, 0, 0b0001_0000, 0, 0, 0, 0];
-  let value = timecode::parser::smpte_12m(&data);
+  let value = Timecode::<FrameRate2500>::parse_smpte_12m(&data);
 
   assert!(value.is_some());
   let tc = value.unwrap();
@@ -64,7 +65,7 @@ fn test_smpte_12m_10_hours() {
 #[test]
 fn test_smpte_12m_drop_frame_and_color_frame() {
   let data = vec![0b1100_0000, 0, 0, 0, 0, 0, 0, 0];
-  let value = timecode::parser::smpte_12m(&data);
+  let value = Timecode::<FrameRate2500>::parse_smpte_12m(&data);
 
   assert!(value.is_some());
   let tc = value.unwrap();
@@ -79,7 +80,7 @@ fn test_smpte_12m_drop_frame_and_color_frame() {
 #[test]
 fn test_smpte_331m_bad_length() {
   let data = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  let value = timecode::parser::smpte_331m(&data);
+  let value = Timecode::<FrameRate2500>::parse_smpte_331m(&data);
 
   assert!(value.is_none());
 }
@@ -105,7 +106,7 @@ fn test_smpte_331m_bad_code() {
     0,
     0,
   ];
-  let value = timecode::parser::smpte_331m(&data);
+  let value = Timecode::<FrameRate2500>::parse_smpte_331m(&data);
 
   assert!(value.is_none());
 }
@@ -131,7 +132,7 @@ fn test_smpte_331m_smpte_12m_content() {
     0,
     0,
   ];
-  let value = timecode::parser::smpte_331m(&data);
+  let value = Timecode::<FrameRate2500>::parse_smpte_331m(&data);
 
   assert!(value.is_some());
   let tc = value.unwrap();
