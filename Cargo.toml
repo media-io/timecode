@@ -1,7 +1,7 @@
 [package]
 name = "timecode"
-version = "0.1.5"
-authors = ["Marc-Antoine Arnaud <marc.antoine@nomalab.com>"]
+version = "0.2.0"
+authors = ["Marc-Antoine Arnaud <maarnaud@media-io.com"]
 description = """
 library to manipulate timecode
 """
