@@ -7,7 +7,6 @@ library to manipulate timecode
 """
 
 repository = "https://github.com/MarcAntoine-Arnaud/rs_timecode"
-documentation = "https://github.com/MarcAntoine-Arnaud/rs_timecode/blob/master/README.md"
 readme = "README.md"
 categories = ["encoding"]
 keywords = ["timecode", "SMPTE"]
