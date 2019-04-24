@@ -7,3 +7,5 @@ extern crate serde_derive;
 
 pub mod timecode;
 pub mod parser;
+
+pub use timecode::Timecode;

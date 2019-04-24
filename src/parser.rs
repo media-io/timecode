@@ -1,5 +1,5 @@
 
-use timecode::Timecode;
+use crate::timecode::Timecode;
 
 fn get_number(data: u8, mask_tens: u8) -> u8 {
     let mask_unit = 0x0F;

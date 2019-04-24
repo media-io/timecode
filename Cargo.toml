@@ -3,18 +3,16 @@ name = "timecode"
 version = "0.1.5"
 authors = ["Marc-Antoine Arnaud <marc.antoine@nomalab.com>"]
 description = """
-library to parse binary timecode
+library to manipulate timecode
 """
 
 repository = "https://github.com/MarcAntoine-Arnaud/rs_timecode"
 documentation = "https://github.com/MarcAntoine-Arnaud/rs_timecode/blob/master/README.md"
 readme = "README.md"
-
-travis-ci = { repository = "https://travis-ci.org/MarcAntoine-Arnaud/rs_timecode", branch = "master" }
-
 categories = ["encoding"]
 keywords = ["timecode", "SMPTE"]
 license = "MIT"
+edition = "2018"
 
 [dependencies]
 serde = "^1.0"
