@@ -1,5 +1,3 @@
-
-
 use std::marker;
 use std::string::ToString;
 
@@ -77,7 +75,9 @@ impl<FrameRate> From<u32> for Timecode<FrameRate> {
     let frame = frames - seconds * fps - minutes * 60 * fps - hours * 60 * 60 * fps;
     let drop_frame = false;
     let color_frame = false;
-    println!("{} {} {} {}", hours, minutes, seconds, frame);
+
+    log::trace!("{} {} {} {}", hours, minutes, seconds, frame);
+
     Timecode {
       hours: hours as u8,
       minutes: minutes as u8,
@@ -118,12 +118,12 @@ impl<FrameRate> Timecode<FrameRate> {
     let drop_frame = (data[0] & 0b0100_0000) != 0;
 
     Some(Timecode::<FrameRate> {
-      hours: hours,
-      minutes: minutes,
-      seconds: seconds,
-      frame: frame,
-      drop_frame: drop_frame,
-      color_frame: color_frame,
+      hours,
+      minutes,
+      seconds,
+      frame,
+      drop_frame,
+      color_frame,
       frame_rate: marker::PhantomData::<FrameRate>,
     })
   }
@@ -182,4 +182,3 @@ fn timecode_from_frame() {
   assert_eq!(t3.seconds, 0);
   assert_eq!(t3.frame, 23);
 }
-

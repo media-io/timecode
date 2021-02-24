@@ -5,7 +5,6 @@ authors = ["Marc-Antoine Arnaud <maarnaud@media-io.com"]
 description = """
 library to manipulate timecode
 """
-
 repository = "https://github.com/MarcAntoine-Arnaud/rs_timecode"
 documentation = "https://docs.rs/timecode"
 readme = "README.md"
@@ -15,7 +14,8 @@ license = "MIT"
 edition = "2018"
 
 [dependencies]
+alga = "0.9"
+log = "0.4"
+nalgebra = "0.24"
 serde = "^1.0"
 serde_derive = "^1.0"
-nalgebra = "0.16.8"
-alga = "0.7.2"
