@@ -7,10 +7,5 @@ extern crate serde_derive;
 mod timecode;
 
 pub use crate::timecode::{
-  Timecode,
-  FrameRate2400,
-  FrameRate2500,
-  FrameRate3000,
-  FrameRate5000,
-  FrameRate6000,
+  FrameRate2400, FrameRate2500, FrameRate3000, FrameRate5000, FrameRate6000, Timecode,
 };

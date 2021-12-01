@@ -9,35 +9,35 @@ pub trait FrameRate {
 pub struct FrameRate2400;
 
 impl FrameRate for FrameRate2400 {
-    const FPS: u32 = 24;
+  const FPS: u32 = 24;
 }
 
 #[derive(Debug, PartialEq)]
 pub struct FrameRate2500;
 
 impl FrameRate for FrameRate2500 {
-    const FPS: u32 = 25;
+  const FPS: u32 = 25;
 }
 
 #[derive(Debug, PartialEq)]
 pub struct FrameRate3000;
 
 impl FrameRate for FrameRate3000 {
-    const FPS: u32 = 30;
+  const FPS: u32 = 30;
 }
 
 #[derive(Debug, PartialEq)]
 pub struct FrameRate5000;
 
 impl FrameRate for FrameRate5000 {
-    const FPS: u32 = 50;
+  const FPS: u32 = 50;
 }
 
 #[derive(Debug, PartialEq)]
 pub struct FrameRate6000;
 
 impl FrameRate for FrameRate6000 {
-    const FPS: u32 = 60;
+  const FPS: u32 = 60;
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -48,7 +48,7 @@ pub struct Timecode<FrameRate> {
   pub frame: u8,
   pub drop_frame: bool,
   pub color_frame: bool,
-  frame_rate: marker::PhantomData::<FrameRate>,
+  frame_rate: marker::PhantomData<FrameRate>,
 }
 
 impl<FrameRate> ToString for Timecode<FrameRate> {
@@ -83,7 +83,7 @@ impl<FrameRate> From<(u32, u32)> for Timecode<FrameRate> {
       frame: frame as u8,
       drop_frame,
       color_frame,
-      frame_rate: marker::PhantomData
+      frame_rate: marker::PhantomData,
     }
   }
 }
