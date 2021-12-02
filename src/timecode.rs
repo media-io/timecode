@@ -3,6 +3,10 @@ use std::string::ToString;
 
 pub trait FrameRate {
   const FPS: u32;
+
+  fn get_fps() -> u32 {
+    Self::FPS
+  }
 }
 
 #[derive(Debug, PartialEq)]
@@ -65,8 +69,10 @@ impl<FrameRate> ToString for Timecode<FrameRate> {
   }
 }
 
-impl<FrameRate> From<(u32, u32)> for Timecode<FrameRate> {
-  fn from((frames, fps): (u32, u32)) -> Self {
+impl<FR: FrameRate> From<u32> for Timecode<FR> {
+  fn from(frames: u32) -> Self {
+    let fps = FR::get_fps();
+
     let hours = frames / (60 * 60 * fps);
     let minutes = (frames / (60 * fps)) - hours * 60;
     let seconds = (frames / fps) - minutes * 60 - hours * 60 * 60;
@@ -138,45 +144,57 @@ impl<FrameRate> Timecode<FrameRate> {
 
 #[test]
 fn timecode_from_frame() {
-  let t1 = Timecode::<FrameRate2400>::from((24 * 60 * 60 * 10, 24));
-  assert_eq!(t1.hours, 10);
-  assert_eq!(t1.minutes, 0);
-  assert_eq!(t1.seconds, 0);
-  assert_eq!(t1.frame, 0);
+  let timecode = Timecode::<FrameRate2400>::from(24 * 60 * 60 * 10);
+  assert_eq!(timecode.hours, 10);
+  assert_eq!(timecode.minutes, 0);
+  assert_eq!(timecode.seconds, 0);
+  assert_eq!(timecode.frame, 0);
 
-  let t1 = Timecode::<FrameRate2400>::from((24 * 60 * 60, 24));
-  assert_eq!(t1.hours, 1);
-  assert_eq!(t1.minutes, 0);
-  assert_eq!(t1.seconds, 0);
-  assert_eq!(t1.frame, 0);
+  let timecode = Timecode::<FrameRate2400>::from(24 * 60 * 60);
+  assert_eq!(timecode.hours, 1);
+  assert_eq!(timecode.minutes, 0);
+  assert_eq!(timecode.seconds, 0);
+  assert_eq!(timecode.frame, 0);
 
-  let t2 = Timecode::<FrameRate2400>::from((24 * 60 * 60 - 1, 24));
-  assert_eq!(t2.hours, 0);
-  assert_eq!(t2.minutes, 59);
-  assert_eq!(t2.seconds, 59);
-  assert_eq!(t2.frame, 23);
+  let timecode = Timecode::<FrameRate2400>::from(24 * 60 * 60 - 1);
+  assert_eq!(timecode.hours, 0);
+  assert_eq!(timecode.minutes, 59);
+  assert_eq!(timecode.seconds, 59);
+  assert_eq!(timecode.frame, 23);
 
-  let t2 = Timecode::<FrameRate2400>::from((24 * 60, 24));
-  assert_eq!(t2.hours, 0);
-  assert_eq!(t2.minutes, 1);
-  assert_eq!(t2.seconds, 0);
-  assert_eq!(t2.frame, 0);
+  let timecode = Timecode::<FrameRate2400>::from(24 * 60);
+  assert_eq!(timecode.hours, 0);
+  assert_eq!(timecode.minutes, 1);
+  assert_eq!(timecode.seconds, 0);
+  assert_eq!(timecode.frame, 0);
 
-  let t2 = Timecode::<FrameRate2400>::from((24 * 60 - 1, 24));
-  assert_eq!(t2.hours, 0);
-  assert_eq!(t2.minutes, 0);
-  assert_eq!(t2.seconds, 59);
-  assert_eq!(t2.frame, 23);
+  let timecode = Timecode::<FrameRate2400>::from(24 * 60 - 1);
+  assert_eq!(timecode.hours, 0);
+  assert_eq!(timecode.minutes, 0);
+  assert_eq!(timecode.seconds, 59);
+  assert_eq!(timecode.frame, 23);
 
-  let t3 = Timecode::<FrameRate2400>::from((24, 24));
-  assert_eq!(t3.hours, 0);
-  assert_eq!(t3.minutes, 0);
-  assert_eq!(t3.seconds, 1);
-  assert_eq!(t3.frame, 0);
+  let timecode = Timecode::<FrameRate2400>::from(24);
+  assert_eq!(timecode.hours, 0);
+  assert_eq!(timecode.minutes, 0);
+  assert_eq!(timecode.seconds, 1);
+  assert_eq!(timecode.frame, 0);
 
-  let t3 = Timecode::<FrameRate2400>::from((23, 24));
-  assert_eq!(t3.hours, 0);
-  assert_eq!(t3.minutes, 0);
-  assert_eq!(t3.seconds, 0);
-  assert_eq!(t3.frame, 23);
+  let timecode = Timecode::<FrameRate2400>::from(23);
+  assert_eq!(timecode.hours, 0);
+  assert_eq!(timecode.minutes, 0);
+  assert_eq!(timecode.seconds, 0);
+  assert_eq!(timecode.frame, 23);
+
+  let timecode = Timecode::<FrameRate2500>::from(25);
+  assert_eq!(timecode.hours, 0);
+  assert_eq!(timecode.minutes, 0);
+  assert_eq!(timecode.seconds, 1);
+  assert_eq!(timecode.frame, 0);
+
+  let timecode = Timecode::<FrameRate2500>::from(24);
+  assert_eq!(timecode.hours, 0);
+  assert_eq!(timecode.minutes, 0);
+  assert_eq!(timecode.seconds, 0);
+  assert_eq!(timecode.frame, 24);
 }
