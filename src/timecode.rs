@@ -132,6 +132,19 @@ impl<FrameRate> Timecode<FrameRate> {
     })
   }
 
+  // used in STL format (EBU Tech 3264)
+  pub fn from_ebu_smpte_time_and_control(data: &[u8; 4]) -> Self {
+    Timecode::<FrameRate> {
+      hours: data[0],
+      minutes: data[1],
+      seconds: data[2],
+      frame: data[3],
+      drop_frame: false,
+      color_frame: false,
+      frame_rate: marker::PhantomData::<FrameRate>,
+    }
+  }
+
   fn get_number(data: u8, mask_tens: u8) -> u8 {
     let mask_unit = 0x0F;
 
@@ -197,4 +210,29 @@ fn timecode_from_frame() {
   assert_eq!(timecode.minutes, 0);
   assert_eq!(timecode.seconds, 0);
   assert_eq!(timecode.frame, 24);
+
+
+  let timecode = Timecode::<FrameRate2500>::from_ebu_smpte_time_and_control(&[10, 0, 0, 0]);
+  assert_eq!(timecode.hours, 10);
+  assert_eq!(timecode.minutes, 0);
+  assert_eq!(timecode.seconds, 0);
+  assert_eq!(timecode.frame, 0);
+
+  let timecode = Timecode::<FrameRate2500>::from_ebu_smpte_time_and_control(&[0, 10, 0, 0]);
+  assert_eq!(timecode.hours, 0);
+  assert_eq!(timecode.minutes, 10);
+  assert_eq!(timecode.seconds, 0);
+  assert_eq!(timecode.frame, 0);
+
+  let timecode = Timecode::<FrameRate2500>::from_ebu_smpte_time_and_control(&[0, 0, 10, 0]);
+  assert_eq!(timecode.hours, 0);
+  assert_eq!(timecode.minutes, 0);
+  assert_eq!(timecode.seconds, 10);
+  assert_eq!(timecode.frame, 0);
+
+  let timecode = Timecode::<FrameRate2500>::from_ebu_smpte_time_and_control(&[0, 0, 0, 10]);
+  assert_eq!(timecode.hours, 0);
+  assert_eq!(timecode.minutes, 0);
+  assert_eq!(timecode.seconds, 0);
+  assert_eq!(timecode.frame, 10);
 }
