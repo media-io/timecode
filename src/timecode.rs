@@ -74,6 +74,12 @@ impl From<(u32, FrameRate)> for Timecode {
   }
 }
 
+impl From<&Timecode> for f64 {
+  fn from(timecode: &Timecode) -> Self {
+    (timecode.hours as f64) * 3600.0 + (timecode.minutes as f64) * 60.0 + (timecode.seconds as f64)
+  }
+}
+
 impl Timecode {
   pub fn frame_rate(&self) -> &FrameRate {
     &self.frame_rate
