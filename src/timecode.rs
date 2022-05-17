@@ -1,6 +1,6 @@
 use std::string::ToString;
 
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub enum FrameRate {
   _24_00,
   _25_00,
@@ -21,7 +21,7 @@ impl From<FrameRate> for f32 {
   }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct Timecode {
   pub hours: u8,
   pub minutes: u8,
