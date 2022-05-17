@@ -1,6 +1,6 @@
 [package]
 name = "timecode"
-version = "0.5.0"
+version = "0.5.1"
 authors = ["Marc-Antoine Arnaud <maarnaud@media-io.com"]
 description = """
 library to manipulate timecode
