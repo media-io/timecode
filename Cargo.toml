@@ -13,9 +13,16 @@ keywords = ["timecode", "SMPTE"]
 license = "MIT"
 edition = "2018"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [dependencies]
 alga = "0.9"
 log = "0.4"
 nalgebra = "0.24"
 serde = "^1.0"
 serde_derive = "^1.0"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = { version = "0.2"}
+wasm-bindgen-test = { version = "0.3"}
