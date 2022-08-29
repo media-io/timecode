@@ -1,11 +1,11 @@
 [package]
 name = "timecode"
 version = "0.5.2"
-authors = ["Marc-Antoine Arnaud <maarnaud@media-io.com"]
+authors = ["Marc-Antoine Arnaud <marc-antoine.arnaud@luminvent.com"]
 description = """
 library to manipulate timecode
 """
-repository = "https://github.com/MarcAntoine-Arnaud/rs_timecode"
+repository = "https://github.com/media-io/rs_timecode"
 documentation = "https://docs.rs/timecode"
 readme = "README.md"
 categories = ["encoding"]
@@ -18,10 +18,11 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 alga = "0.9"
+frame-rate = { version = "0.2" }
 log = "0.4"
 nalgebra = "0.24"
-serde = "^1.0"
-serde_derive = "^1.0"
+num-traits = "0.2"
+serde = { version = "^1.0", features = ["derive"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = { version = "0.2"}
