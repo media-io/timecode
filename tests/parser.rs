@@ -1,4 +1,7 @@
 extern crate timecode;
+
+use frame_rate::FrameRate::_25_00;
+use timecode::Fraction::Frame;
 use timecode::*;
 
 #[test]
@@ -18,9 +21,15 @@ fn test_smpte_12m_zero() {
   assert_eq!(tc.hours, 0);
   assert_eq!(tc.minutes, 0);
   assert_eq!(tc.seconds, 0);
-  assert_eq!(tc.frame, 0);
-  assert!(!tc.drop_frame);
-  assert!(!tc.color_frame);
+  assert_eq!(
+    tc.fraction,
+    Frame {
+      frames: 0,
+      drop_frame: false,
+      color_frame: false,
+      frame_rate: _25_00
+    }
+  );
 }
 
 #[test]
@@ -42,9 +51,15 @@ fn test_smpte_12m_full_range() {
   assert_eq!(tc.hours, 45);
   assert_eq!(tc.minutes, 85);
   assert_eq!(tc.seconds, 85);
-  assert_eq!(tc.frame, 45);
-  assert!(!tc.drop_frame);
-  assert!(!tc.color_frame);
+  assert_eq!(
+    tc.fraction,
+    Frame {
+      frames: 45,
+      drop_frame: false,
+      color_frame: false,
+      frame_rate: _25_00
+    }
+  );
 }
 
 #[test]
@@ -57,9 +72,15 @@ fn test_smpte_12m_10_hours() {
   assert_eq!(tc.hours, 10);
   assert_eq!(tc.minutes, 0);
   assert_eq!(tc.seconds, 0);
-  assert_eq!(tc.frame, 0);
-  assert!(!tc.drop_frame);
-  assert!(!tc.color_frame);
+  assert_eq!(
+    tc.fraction,
+    Frame {
+      frames: 0,
+      drop_frame: false,
+      color_frame: false,
+      frame_rate: _25_00
+    }
+  );
 }
 
 #[test]
@@ -72,9 +93,15 @@ fn test_smpte_12m_drop_frame_and_color_frame() {
   assert_eq!(tc.hours, 0);
   assert_eq!(tc.minutes, 0);
   assert_eq!(tc.seconds, 0);
-  assert_eq!(tc.frame, 0);
-  assert!(tc.drop_frame);
-  assert!(tc.color_frame);
+  assert_eq!(
+    tc.fraction,
+    Frame {
+      frames: 0,
+      drop_frame: true,
+      color_frame: true,
+      frame_rate: _25_00
+    }
+  );
 }
 
 #[test]
@@ -139,7 +166,13 @@ fn test_smpte_331m_smpte_12m_content() {
   assert_eq!(tc.hours, 10);
   assert_eq!(tc.minutes, 0);
   assert_eq!(tc.seconds, 0);
-  assert_eq!(tc.frame, 0);
-  assert!(!tc.drop_frame);
-  assert!(!tc.color_frame);
+  assert_eq!(
+    tc.fraction,
+    Frame {
+      frames: 0,
+      drop_frame: false,
+      color_frame: false,
+      frame_rate: _25_00
+    }
+  );
 }
