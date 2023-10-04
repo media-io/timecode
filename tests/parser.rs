@@ -1,7 +1,5 @@
 extern crate timecode;
 
-
-
 use timecode::*;
 
 #[test]
@@ -23,12 +21,9 @@ fn test_smpte_12m_zero() {
   assert_eq!(tc.seconds(), 0);
   assert_eq!(
     tc.fraction(),
-    &Fraction::Frame {
-      frames: 0,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: _25_00
-    }
+    &Fraction::Frame(Frame::new(0,false,
+                                       false,
+                                       FrameRate::_25_00))
   );
 }
 
@@ -53,12 +48,10 @@ fn test_smpte_12m_full_range() {
   assert_eq!(tc.seconds(), 85);
   assert_eq!(
     tc.fraction(),
-    &Fraction::Frame {
-      frames: 45,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: _25_00
-    }
+    &Fraction::Frame(Frame::new(45,
+                                       false,
+                                       false,
+                                      FrameRate::_25_00))
   );
 }
 
@@ -74,12 +67,9 @@ fn test_smpte_12m_10_hours() {
   assert_eq!(tc.seconds(), 0);
   assert_eq!(
     tc.fraction(),
-    &Fraction::Frame {
-      frames: 0,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: _25_00
-    }
+    &Fraction::Frame(Frame::new(0,false,
+                                false,
+                                FrameRate::_25_00))
   );
 }
 
@@ -95,12 +85,9 @@ fn test_smpte_12m_drop_frame_and_color_frame() {
   assert_eq!(tc.seconds(), 0);
   assert_eq!(
     tc.fraction(),
-    &Fraction::Frame {
-      frames: 0,
-      drop_frame: true,
-      color_frame: true,
-      frame_rate: _25_00
-    }
+    &Fraction::Frame(Frame::new(0,true,
+                                true,
+                                FrameRate::_25_00))
   );
 }
 
@@ -168,11 +155,9 @@ fn test_smpte_331m_smpte_12m_content() {
   assert_eq!(tc.seconds(), 0);
   assert_eq!(
     tc.fraction(),
-    &Fraction::Frame {
-      frames: 0,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: _25_00
-    }
+    &Fraction::Frame(Frame::new( 0,
+                                       false,
+                                       false,
+                                       FrameRate::_25_00))
   );
 }

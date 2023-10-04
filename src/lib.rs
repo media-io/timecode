@@ -1,3 +1,7 @@
+mod fraction;
+mod frame;
+pub use fraction::Fraction;
+pub use frame::Frame;
 pub use frame_rate::FrameRate;
 use num_traits::cast::ToPrimitive;
 use serde::{Deserialize, Serialize};
@@ -10,41 +14,10 @@ pub struct Timecode {
   seconds: u8,
   fraction: Fraction,
 }
-impl frame {
-  fn new(frames: u8, drop_frame: bool, color_frame: bool, frame_rate: FrameRate) -> frame {
-    frame {
-      frames,
-      drop_frame,
-      color_frame,
-      frame_rate,
-    }
-  }
-}
-#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
-pub struct frame {
-  frames: u8,
-  drop_frame: bool,
-  color_frame: bool,
-  frame_rate: FrameRate,
-}
-#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
-pub enum Fraction {
-  Frame(frame),
-  MilliSeconds(u16),
-}
 
 impl ToString for Timecode {
   fn to_string(&self) -> String {
-    let fraction = match self.fraction {
-      Fraction::Frame(frame {
-        frames, drop_frame, ..
-      }) => {
-        let separator = if drop_frame { ';' } else { ':' };
-
-        format!("{}{:02}", separator, frames)
-      }
-      Fraction::MilliSeconds(milliseconds) => format!(".{:03}", milliseconds),
-    };
+    let fraction = self.fraction.to_string();
 
     format!(
       "{:02}:{:02}:{:02}{}",
@@ -92,12 +65,12 @@ impl From<(u32, FrameRate)> for Timecode {
     let color_frame = false;
     let drop_frame = false;
 
-    let fraction = Fraction::Frame(frame {
-      frames: frames as u8,
+    let fraction = Fraction::Frame(Frame::new(
+      frames as u8,
       color_frame,
       drop_frame,
       frame_rate,
-    });
+    ));
 
     Timecode {
       hours: hours as u8,
@@ -115,12 +88,6 @@ impl From<&Timecode> for f64 {
 }
 
 impl Timecode {
-  pub fn frame_rate(&self) -> Option<FrameRate> {
-    match self.fraction {
-      Fraction::Frame(frame { frame_rate, .. }) => Some(frame_rate),
-      _ => None,
-    }
-  }
   pub fn hours(&self) -> u8 {
     self.hours
   }
@@ -130,43 +97,8 @@ impl Timecode {
   pub fn seconds(&self) -> u8 {
     self.seconds
   }
-
-  pub fn frame(&self) -> Option<u8> {
-    match &self.fraction {
-      &Fraction::Frame(frame { frames, .. }) => Some(frames),
-      _ => None,
-    }
-  }
-
-  pub fn drop_frame(&self) -> Option<bool> {
-    match &self.fraction {
-      &Fraction::Frame(frame { drop_frame, .. }) => Some(drop_frame),
-      _ => None,
-    }
-  }
-
-  pub fn color_frame(&self) -> Option<bool> {
-    match &self.fraction {
-      &Fraction::Frame(frame { color_frame, .. }) => Some(color_frame),
-      _ => None,
-    }
-  }
-
-  pub fn fraction(&self) -> Fraction {
-    match &self.fraction {
-      &Fraction::Frame(frame {
-        frames,
-        drop_frame,
-        color_frame,
-        frame_rate,
-      }) => Fraction::Frame(frame {
-        frames,
-        drop_frame,
-        color_frame,
-        frame_rate,
-      }),
-      &Fraction::MilliSeconds(ms) => Fraction::MilliSeconds(ms),
-    }
+  pub fn fraction(&self) -> &Fraction {
+    &self.fraction
   }
 
   pub fn parse_smpte_331m(data: &[u8], frame_rate: FrameRate) -> Option<Self> {
@@ -189,12 +121,12 @@ impl Timecode {
     let color_frame = (data[0] & 0b1000_0000) != 0;
     let drop_frame = (data[0] & 0b0100_0000) != 0;
 
-    let fraction = Fraction::Frame(frame {
-      frames: (Timecode::get_number(data[0], mask_tens_2)),
+    let fraction = Fraction::Frame(Frame::new(
+      Timecode::get_number(data[0], mask_tens_2),
       drop_frame,
       color_frame,
       frame_rate,
-    });
+    ));
     let seconds = Timecode::get_number(data[1], mask_tens_3);
     let minutes = Timecode::get_number(data[2], mask_tens_3);
     let hours = Timecode::get_number(data[3], mask_tens_2);
@@ -209,12 +141,7 @@ impl Timecode {
 
   // used in STL format (EBU Tech 3264)
   pub fn from_ebu_smpte_time_and_control(data: &[u8; 4], frame_rate: FrameRate) -> Timecode {
-    let fraction = Fraction::Frame(frame {
-      frames: data[3],
-      drop_frame: false,
-      color_frame: false,
-      frame_rate,
-    });
+    let fraction = Fraction::Frame(Frame::new(data[3], false, false, frame_rate));
     Timecode {
       hours: data[0],
       minutes: data[1],
@@ -241,12 +168,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 0);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 0,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_24_00
-    })
+    &Fraction::Frame(Frame::new(0, false, false, FrameRate::_24_00))
   );
 
   let timecode = Timecode::from((24 * 60 * 60, FrameRate::_24_00));
@@ -255,12 +177,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 0);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 0,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_24_00
-    })
+    &Fraction::Frame(Frame::new(0, false, false, FrameRate::_24_00))
   );
 
   let timecode = Timecode::from((24 * 60 * 60 - 1, FrameRate::_24_00));
@@ -269,12 +186,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 59);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 23,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_24_00
-    })
+    &Fraction::Frame(Frame::new(23, false, false, FrameRate::_24_00))
   );
 
   let timecode = Timecode::from((24 * 60, FrameRate::_24_00));
@@ -283,12 +195,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 0);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 0,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_24_00
-    })
+    &Fraction::Frame(Frame::new(0, false, false, FrameRate::_24_00))
   );
 
   let timecode = Timecode::from((24 * 60 - 1, FrameRate::_24_00));
@@ -297,12 +204,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 59);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 23,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_24_00
-    })
+    &Fraction::Frame(Frame::new(23, false, false, FrameRate::_24_00))
   );
 
   let timecode = Timecode::from((24, FrameRate::_24_00));
@@ -311,12 +213,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 1);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 0,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_24_00
-    })
+    &Fraction::Frame(Frame::new(0, false, false, FrameRate::_24_00))
   );
 
   let timecode = Timecode::from((23, FrameRate::_24_00));
@@ -325,12 +222,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 0);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 23,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_24_00
-    })
+    &Fraction::Frame(Frame::new(23, false, false, FrameRate::_24_00))
   );
 
   let timecode = Timecode::from((25, FrameRate::_25_00));
@@ -339,12 +231,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 1);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 0,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_25_00
-    })
+    &Fraction::Frame(Frame::new(0, false, false, FrameRate::_25_00))
   );
 
   let timecode = Timecode::from((24, FrameRate::_25_00));
@@ -353,12 +240,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 0);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 24,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_25_00
-    })
+    &Fraction::Frame(Frame::new(24, false, false, FrameRate::_25_00))
   );
 
   let timecode = Timecode::from_ebu_smpte_time_and_control(&[10, 0, 0, 0], FrameRate::_25_00);
@@ -367,12 +249,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 0);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 0,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_25_00
-    })
+    &Fraction::Frame(Frame::new(0, false, false, FrameRate::_25_00))
   );
 
   let timecode = Timecode::from_ebu_smpte_time_and_control(&[0, 10, 0, 0], FrameRate::_25_00);
@@ -381,12 +258,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 0);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 0,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_25_00
-    })
+    &Fraction::Frame(Frame::new(0, false, false, FrameRate::_25_00))
   );
 
   let timecode = Timecode::from_ebu_smpte_time_and_control(&[0, 0, 10, 0], FrameRate::_25_00);
@@ -395,12 +267,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 10);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 0,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_25_00
-    })
+    &Fraction::Frame(Frame::new(0, false, false, FrameRate::_25_00))
   );
 
   let timecode = Timecode::from_ebu_smpte_time_and_control(&[0, 0, 0, 10], FrameRate::_25_00);
@@ -409,12 +276,7 @@ fn timecode_from_frame() {
   assert_eq!(timecode.seconds(), 0);
   assert_eq!(
     timecode.fraction(),
-    Fraction::Frame(frame {
-      frames: 10,
-      drop_frame: false,
-      color_frame: false,
-      frame_rate: FrameRate::_25_00
-    })
+    &Fraction::Frame(Frame::new(10, false, false, FrameRate::_25_00))
   );
 }
 
@@ -424,5 +286,5 @@ fn timecode_from_fram2() {
   assert_eq!(timecode.hours(), 0);
   assert_eq!(timecode.minutes(), 2);
   assert_eq!(timecode.seconds(), 5);
-  assert_eq!(timecode.fraction(), Fraction::MilliSeconds(66));
+  assert_eq!(timecode.fraction(), &Fraction::MilliSeconds(66));
 }
