@@ -1,6 +1,6 @@
 extern crate timecode;
 
-use frame_rate::FrameRate::_25_00;
+
 
 use timecode::*;
 
