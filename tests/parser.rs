@@ -1,4 +1,3 @@
-extern crate timecode;
 use timecode::*;
 
 #[test]
@@ -15,12 +14,13 @@ fn test_smpte_12m_zero() {
 
   assert!(value.is_some());
   let tc = value.unwrap();
-  assert_eq!(tc.hours, 0);
-  assert_eq!(tc.minutes, 0);
-  assert_eq!(tc.seconds, 0);
-  assert_eq!(tc.frame, 0);
-  assert!(!tc.drop_frame);
-  assert!(!tc.color_frame);
+  assert_eq!(tc.hours(), 0);
+  assert_eq!(tc.minutes(), 0);
+  assert_eq!(tc.seconds(), 0);
+  assert_eq!(
+    tc.fraction(),
+    &Fraction::Frames(TimecodeFrames::new(FrameRate::_25_00, 0, false, false,))
+  );
 }
 
 #[test]
@@ -39,12 +39,13 @@ fn test_smpte_12m_full_range() {
 
   assert!(value.is_some());
   let tc = value.unwrap();
-  assert_eq!(tc.hours, 45);
-  assert_eq!(tc.minutes, 85);
-  assert_eq!(tc.seconds, 85);
-  assert_eq!(tc.frame, 45);
-  assert!(!tc.drop_frame);
-  assert!(!tc.color_frame);
+  assert_eq!(tc.hours(), 45);
+  assert_eq!(tc.minutes(), 85);
+  assert_eq!(tc.seconds(), 85);
+  assert_eq!(
+    tc.fraction(),
+    &Fraction::Frames(TimecodeFrames::new(FrameRate::_25_00, 45, false, false,))
+  );
 }
 
 #[test]
@@ -54,12 +55,13 @@ fn test_smpte_12m_10_hours() {
 
   assert!(value.is_some());
   let tc = value.unwrap();
-  assert_eq!(tc.hours, 10);
-  assert_eq!(tc.minutes, 0);
-  assert_eq!(tc.seconds, 0);
-  assert_eq!(tc.frame, 0);
-  assert!(!tc.drop_frame);
-  assert!(!tc.color_frame);
+  assert_eq!(tc.hours(), 10);
+  assert_eq!(tc.minutes(), 0);
+  assert_eq!(tc.seconds(), 0);
+  assert_eq!(
+    tc.fraction(),
+    &Fraction::Frames(TimecodeFrames::new(FrameRate::_25_00, 0, false, false,))
+  );
 }
 
 #[test]
@@ -69,12 +71,13 @@ fn test_smpte_12m_drop_frame_and_color_frame() {
 
   assert!(value.is_some());
   let tc = value.unwrap();
-  assert_eq!(tc.hours, 0);
-  assert_eq!(tc.minutes, 0);
-  assert_eq!(tc.seconds, 0);
-  assert_eq!(tc.frame, 0);
-  assert!(tc.drop_frame);
-  assert!(tc.color_frame);
+  assert_eq!(tc.hours(), 0);
+  assert_eq!(tc.minutes(), 0);
+  assert_eq!(tc.seconds(), 0);
+  assert_eq!(
+    tc.fraction(),
+    &Fraction::Frames(TimecodeFrames::new(FrameRate::_25_00, 0, true, true,))
+  );
 }
 
 #[test]
@@ -136,10 +139,11 @@ fn test_smpte_331m_smpte_12m_content() {
 
   assert!(value.is_some());
   let tc = value.unwrap();
-  assert_eq!(tc.hours, 10);
-  assert_eq!(tc.minutes, 0);
-  assert_eq!(tc.seconds, 0);
-  assert_eq!(tc.frame, 0);
-  assert!(!tc.drop_frame);
-  assert!(!tc.color_frame);
+  assert_eq!(tc.hours(), 10);
+  assert_eq!(tc.minutes(), 0);
+  assert_eq!(tc.seconds(), 0);
+  assert_eq!(
+    tc.fraction(),
+    &Fraction::Frames(TimecodeFrames::new(FrameRate::_25_00, 0, false, false,))
+  );
 }
