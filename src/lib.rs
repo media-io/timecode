@@ -42,17 +42,15 @@ impl From<(u32, FrameRate)> for Timecode {
       - seconds * (fps as u32)
       - minutes * 60 * (fps as u32)
       - hours * 60 * 60 * (fps as u32);
-    let color_frame = false;
-    let drop_frame = false;
 
     let fraction = Fraction::Frames(TimecodeFrames::new(
       frame_rate,
       number_of_frames as u8,
-      color_frame,
-      drop_frame,
+      false,
+      false,
     ));
 
-    Timecode {
+    Self {
       hours: hours as u8,
       minutes: minutes as u8,
       seconds: seconds as u8,
@@ -131,7 +129,7 @@ impl From<Duration> for Timecode {
     let seconds = (remaining % 60) as u8;
     let fraction = Fraction::MilliSeconds(duration.subsec_millis() as u16);
 
-    Timecode {
+    Self {
       hours,
       minutes,
       seconds,
