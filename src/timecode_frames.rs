@@ -40,6 +40,18 @@ impl TimecodeFrames {
   pub fn color_frame(&self) -> bool {
     self.color_frame
   }
+
+  pub fn number_of_digits(&self) -> usize {
+    2
+  }
+
+  pub fn separator(&self) -> char {
+    if self.drop_frame() {
+      ';'
+    } else {
+      ':'
+    }
+  }
 }
 
 impl ToString for TimecodeFrames {
