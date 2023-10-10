@@ -7,6 +7,22 @@ pub enum Fraction {
   MilliSeconds(u16),
 }
 
+impl Fraction {
+  pub fn number_of_digits(&self) -> usize {
+    match self {
+      Self::Frames(timecode_frame) => timecode_frame.number_of_digits(),
+      Self::MilliSeconds(_) => 3,
+    }
+  }
+
+  pub fn separator(&self) -> char {
+    match self {
+      Self::Frames(timecode_frame) => timecode_frame.separator(),
+      Self::MilliSeconds(_) => '.',
+    }
+  }
+}
+
 impl ToString for Fraction {
   fn to_string(&self) -> String {
     match self {
