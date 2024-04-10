@@ -2,9 +2,11 @@ mod fraction;
 mod timecode_frames;
 
 pub use fraction::Fraction;
-pub use frame_rate::FrameRate;
 pub use timecode_frames::TimecodeFrames;
 
+pub use frame_rate::FrameRate;
+
+use frame_rate::Ratio;
 use num_traits::cast::ToPrimitive;
 use serde::{Deserialize, Serialize};
 use std::{string::ToString, time::Duration};
@@ -31,7 +33,7 @@ impl Timecode {
 impl From<(u32, FrameRate)> for Timecode {
   fn from((number_of_frames, frame_rate): (u32, FrameRate)) -> Self {
     let fps: f32 = {
-      let frame_rate: frame_rate::Ratio<u32> = frame_rate.into();
+      let frame_rate: Ratio<u32> = frame_rate.into();
       frame_rate.to_f32().unwrap_or_default()
     };
 
@@ -173,6 +175,25 @@ impl From<&Timecode> for f64 {
   }
 }
 
+impl From<&Timecode> for Ratio<u64> {
+  fn from(timecode: &Timecode) -> Self {
+    let fraction_duration = match timecode.fraction() {
+      Fraction::Frames(timecode_frames) => {
+        let frame_rate = Ratio::from(timecode_frames.frame_rate());
+
+        let frame_duration = Ratio::new(*frame_rate.denom() as u64, *frame_rate.numer() as u64);
+
+        frame_duration * timecode_frames.number_of_frames() as u64
+      }
+      Fraction::MilliSeconds(milli_seconds) => Ratio::new(*milli_seconds as u64, 1000),
+    };
+
+    Ratio::from_integer(
+      (timecode.hours() as u64 * 60 + timecode.minutes() as u64) * 60 + timecode.seconds() as u64,
+    ) + fraction_duration
+  }
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
@@ -299,10 +320,21 @@ mod tests {
 
   #[test]
   fn timecode_from_duration() {
-    let timecode = Timecode::from(Duration::from_millis(2 * 60 * 1000 + 5 * 1000 + 66));
+    let timecode = Timecode::from(Duration::from_millis((2 * 60 + 5) * 1000 + 66));
     assert_eq!(timecode.hours(), 0);
     assert_eq!(timecode.minutes(), 2);
     assert_eq!(timecode.seconds(), 5);
     assert_eq!(timecode.fraction(), &Fraction::MilliSeconds(66));
+  }
+
+  #[test]
+  fn ratio_from_timecode() {
+    let timecode = Timecode::from((234, FrameRate::_25_00));
+    let duration: Ratio<u64> = (&timecode).into();
+    assert_eq!(duration, Ratio::new(234, 25));
+
+    let timecode = Timecode::from(Duration::from_millis((2 * 60 + 5) * 1000 + 66));
+    let duration: Ratio<u64> = (&timecode).into();
+    assert_eq!(duration, Ratio::new((2 * 60 + 5) * 1000 + 66, 1000));
   }
 }
