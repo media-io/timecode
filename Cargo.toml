@@ -1,26 +1,27 @@
 [package]
 name = "timecode"
 version = "0.7.1"
-authors = ["Marc-Antoine Arnaud <marc-antoine.arnaud@luminvent.com"]
+authors = [
+    "Marc-Antoine Arnaud <marc-antoine.arnaud@luminvent.com",
+    "Vincent Jousse <vincent.jousse@luminvent.com>",
+]
+edition = "2021"
 description = """
 library to manipulate timecode
 """
-repository = "https://github.com/media-io/rs_timecode"
 documentation = "https://docs.rs/timecode"
 readme = "README.md"
-categories = ["encoding"]
-keywords = ["timecode", "SMPTE"]
+repository = "https://github.com/media-io/timecode"
 license = "MIT"
-edition = "2018"
+keywords = ["timecode", "SMPTE"]
+categories = ["encoding"]
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-alga = "0.9"
 frame-rate = { version = "0.2" }
 log = "0.4"
-nalgebra = "0.24"
 num-traits = "0.2"
 serde = { version = "^1.0", features = ["derive"] }
 
