@@ -1,5 +1,6 @@
 use super::TimecodeFrames;
 use serde::{Deserialize, Serialize};
+use std::fmt::Display;
 
 #[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub enum Fraction {
@@ -23,11 +24,12 @@ impl Fraction {
   }
 }
 
-impl ToString for Fraction {
-  fn to_string(&self) -> String {
-    match self {
+impl Display for Fraction {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    let str = match self {
       Self::Frames(timecode_frame) => timecode_frame.to_string(),
       Self::MilliSeconds(milliseconds) => format!(".{:03}", milliseconds),
-    }
+    };
+    write!(f, "{}", str)
   }
 }

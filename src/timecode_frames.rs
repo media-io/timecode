@@ -1,4 +1,5 @@
 pub use frame_rate::FrameRate;
+use std::fmt::Display;
 
 use serde::{Deserialize, Serialize};
 
@@ -54,10 +55,10 @@ impl TimecodeFrames {
   }
 }
 
-impl ToString for TimecodeFrames {
-  fn to_string(&self) -> String {
+impl Display for TimecodeFrames {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     let separator = if self.drop_frame() { ';' } else { ':' };
 
-    format!("{}{:02}", separator, self.number_of_frames())
+    write!(f, "{}{:02}", separator, self.number_of_frames())
   }
 }

@@ -9,6 +9,7 @@ pub use frame_rate::FrameRate;
 use frame_rate::Ratio;
 use num_traits::cast::ToPrimitive;
 use serde::{Deserialize, Serialize};
+use std::fmt::Display;
 use std::{string::ToString, time::Duration};
 
 #[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
@@ -158,11 +159,12 @@ impl Timecode {
   }
 }
 
-impl ToString for Timecode {
-  fn to_string(&self) -> String {
+impl Display for Timecode {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     let fraction = self.fraction.to_string();
 
-    format!(
+    write!(
+      f,
       "{:02}:{:02}:{:02}{}",
       self.hours, self.minutes, self.seconds, fraction
     )
