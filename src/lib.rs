@@ -36,6 +36,7 @@ impl From<(u32, FrameRate)> for Timecode {
     let fps: f32 = {
       let computational_frame_rate = match frame_rate {
         FrameRate::_23_97 => FrameRate::_24_00,
+        FrameRate::_24_97 => FrameRate::_25_00,
         _ => frame_rate,
       };
 
@@ -186,7 +187,13 @@ impl From<&Timecode> for Ratio<u64> {
   fn from(timecode: &Timecode) -> Self {
     let fraction_duration = match timecode.fraction() {
       Fraction::Frames(timecode_frames) => {
-        let frame_rate = Ratio::from(timecode_frames.frame_rate());
+        let computational_frame_rate = match timecode_frames.frame_rate() {
+          FrameRate::_23_97 => FrameRate::_24_00,
+          FrameRate::_24_97 => FrameRate::_25_00,
+          frame_rate => frame_rate,
+        };
+
+        let frame_rate = Ratio::from(computational_frame_rate);
 
         let frame_duration = Ratio::new(*frame_rate.denom() as u64, *frame_rate.numer() as u64);
 
