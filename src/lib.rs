@@ -34,7 +34,12 @@ impl Timecode {
 impl From<(u32, FrameRate)> for Timecode {
   fn from((number_of_frames, frame_rate): (u32, FrameRate)) -> Self {
     let fps: f32 = {
-      let frame_rate: Ratio<u32> = frame_rate.into();
+      let computational_frame_rate = match frame_rate {
+        FrameRate::_23_97 => FrameRate::_24_00,
+        _ => frame_rate,
+      };
+
+      let frame_rate: Ratio<u32> = computational_frame_rate.into();
       frame_rate.to_f32().unwrap_or_default()
     };
 
@@ -338,5 +343,71 @@ mod tests {
     let timecode = Timecode::from(Duration::from_millis((2 * 60 + 5) * 1000 + 66));
     let duration: Ratio<u64> = (&timecode).into();
     assert_eq!(duration, Ratio::new((2 * 60 + 5) * 1000 + 66, 1000));
+  }
+
+  #[test]
+  fn timecode_from_frame_at_23_97_fps() {
+    let timecode = Timecode::from((24 * 60 * 60 * 10, FrameRate::_23_97));
+    assert_eq!(timecode.hours(), 10);
+    assert_eq!(timecode.minutes(), 0);
+    assert_eq!(timecode.seconds(), 0);
+    assert_eq!(
+      timecode.fraction(),
+      &Fraction::Frames(TimecodeFrames::new(FrameRate::_23_97, 0, false, false,))
+    );
+
+    let timecode = Timecode::from((24 * 60 * 60, FrameRate::_23_97));
+    assert_eq!(timecode.hours(), 1);
+    assert_eq!(timecode.minutes(), 0);
+    assert_eq!(timecode.seconds(), 0);
+    assert_eq!(
+      timecode.fraction(),
+      &Fraction::Frames(TimecodeFrames::new(FrameRate::_23_97, 0, false, false,))
+    );
+
+    let timecode = Timecode::from((24 * 60 * 60 - 1, FrameRate::_23_97));
+    assert_eq!(timecode.hours(), 0);
+    assert_eq!(timecode.minutes(), 59);
+    assert_eq!(timecode.seconds(), 59);
+    assert_eq!(
+      timecode.fraction(),
+      &Fraction::Frames(TimecodeFrames::new(FrameRate::_23_97, 23, false, false,))
+    );
+
+    let timecode = Timecode::from((24 * 60, FrameRate::_23_97));
+    assert_eq!(timecode.hours(), 0);
+    assert_eq!(timecode.minutes(), 1);
+    assert_eq!(timecode.seconds(), 0);
+    assert_eq!(
+      timecode.fraction(),
+      &Fraction::Frames(TimecodeFrames::new(FrameRate::_23_97, 0, false, false,))
+    );
+
+    let timecode = Timecode::from((24 * 60 - 1, FrameRate::_23_97));
+    assert_eq!(timecode.hours(), 0);
+    assert_eq!(timecode.minutes(), 0);
+    assert_eq!(timecode.seconds(), 59);
+    assert_eq!(
+      timecode.fraction(),
+      &Fraction::Frames(TimecodeFrames::new(FrameRate::_23_97, 23, false, false,))
+    );
+
+    let timecode = Timecode::from((24, FrameRate::_23_97));
+    assert_eq!(timecode.hours(), 0);
+    assert_eq!(timecode.minutes(), 0);
+    assert_eq!(timecode.seconds(), 1);
+    assert_eq!(
+      timecode.fraction(),
+      &Fraction::Frames(TimecodeFrames::new(FrameRate::_23_97, 0, false, false,))
+    );
+
+    let timecode = Timecode::from((23, FrameRate::_23_97));
+    assert_eq!(timecode.hours(), 0);
+    assert_eq!(timecode.minutes(), 0);
+    assert_eq!(timecode.seconds(), 0);
+    assert_eq!(
+      timecode.fraction(),
+      &Fraction::Frames(TimecodeFrames::new(FrameRate::_23_97, 23, false, false,))
+    );
   }
 }
